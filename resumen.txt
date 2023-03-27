@@ -1,0 +1,128 @@
+Primero que nada explicar componentes controlados y no controlados
+
+
+Componentes controlados
+
+Son componentes que reciben un valor y handler por prop, de manera que, el estado y su valor estan en sincronia
+es decir, cuando el input dispare el onChange, su valor en el estado cambiara, por lo que se modificara, y este estado modificado
+sera vuelto a pasar por props. 
+
+function ControlledForm() {
+	const [state, setState] = useState({
+    nombre: "",
+    apellido: ""
+  })
+
+  const handleChangeState = (field, value) => {
+    setState(prevState => ({...state, [field]: value}))
+  }
+
+  useEffect(() => {console.log("Re-render!")}, [state])
+  
+  return (
+    <div>
+
+      <h1>Ingrese su nombre</h1>
+      <input type="text" value={state.nombre} onChange={e => handleChangeState("nombre", e.target.value)} />
+
+      <h1>Ingrese su apellido</h1>
+      <input type="text" value={state.apellido} onChange={e => handleChangeState("apellido", e.target.value)} />
+
+      <button onClick={e => console.log(state)}>Submit</button>
+      
+    </div>
+  );
+}
+
+
+Podemos observar que al modificar cualquiera de los dos campos, se re renderea todo el tiempo el estado, de manera innecesaria ya que a mi
+me importa el estado final, no el transicional. Ejemplo:
+
+  R, Ra, Ram, Rami, Ramir, Ramiro
+
+En esta secuencia, hubieron 6 re-renders, cuando a mi me importa solo el estado cuando yo clickeo Submit
+
+Sabiendo esto, ahora podemos ver los no controlados
+
+
+function UncontrolledForm() {
+  const [state, setState] = useState("")
+
+  const handleSubmitClick = () => {
+    const name = window.inputReference.value;
+    setState(prevState => name)
+  };
+
+  useEffect(() => {console.log("Re-render!")}, [state])
+
+  return (
+    <div>
+      <input type="text" id="inputReference" />
+      <button onClick={e => handleSubmitClick()}>Submit</button>
+    </div>
+  );
+}
+
+En este caso, fijense que el input no tiene ni handler ni value, tiene un id, el cual identifica este nodo en el DOM.
+Uno al modificar este campo, esta modificando el innerHTML del nodo, por lo que para luego acceder al valor de este nodo, habria que acceder a su valor en el DOM.
+En este caso lo codee de manera que uso el objeto window, en el proximo ejemplo lo hago de la "manera" React
+
+
+function UncontrolledForm() {
+  const [state, setState] = useState("")
+  const nameRef = useRef();
+
+
+  const handleSubmitClick = () => {
+    setState(prevState => nameRef.current.value)
+  }
+
+  useEffect(() => {console.log("Re-render!")}, [state])
+
+  return (
+    <div>
+      <input type="text" ref={nameRef} />
+      <button onClick={e => handleSubmitClick()} />
+    </div>
+  );
+}
+
+
+En este ejemplo doy uso del hook useRef() para instanciar una referencia que va a ser asignada al input
+la cual despues accedo a su valor para setear el estado al hacer click en el submit
+
+
+React hook form:
+  Buen DX
+  Liviano y performante
+  Buen UX
+  Facil de incorporar a formularios existentes, modificando poco codigo
+  Se basa en componentes no controlados, aislando los inputs de tu formulario entre si.
+  Tiene validacion estandar de HTML
+
+
+Pros generales:
+  - Open source
+  - Activamente mantenido
+  - En alza de popularidad
+
+Pros casos de uso:
+  - Puedo encapsular componentes de librerias de ui que son controlados con el componente Controller y hacerlo funcionar. 
+      Por lo que podemos tener componentes controlados y no controlados sin problema alguno
+  - Se puede utilizar en formularios anidados
+  - Soporte para Zod, Yup y demas
+
+Casos de uso a entender como se desarrollan con el hook:
+  - Array de objetos/plano que yo agrega o saco elementos del mismo, que pase su valor final, ej: [1,2,3,4] a ser parte del estado del formulario al submitearlo.
+    El mismo array se modifica por medio de un solo input, que yo escribo y al darle al boton + se agrega, o al clickear una X en uno de los elementos rendereados, se borra del
+    estado.
+  - Array de CAMPOS dinamicos, ej: tabla de despachos TAGSA. (useFieldArray?)
+  
+Hooks:
+  useFormState:
+    Funcion:
+      - Sirve para detectar si el usuario modifico el campo, dejandolo "dirty"
+    
+    Preguntas:
+      - En la docu explica que sirve para reducir el impacto de los re renders, pero por que? No termino de entender en la explicacion
+        - Proxy, reflection? 
