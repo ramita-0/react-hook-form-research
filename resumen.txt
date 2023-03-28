@@ -116,13 +116,25 @@ Casos de uso a entender como se desarrollan con el hook:
   - Array de objetos/plano que yo agrega o saco elementos del mismo, que pase su valor final, ej: [1,2,3,4] a ser parte del estado del formulario al submitearlo.
     El mismo array se modifica por medio de un solo input, que yo escribo y al darle al boton + se agrega, o al clickear una X en uno de los elementos rendereados, se borra del
     estado.
-  - Array de CAMPOS dinamicos, ej: tabla de despachos TAGSA. (useFieldArray?)
+  - Array de CAMPOS dinamicos, ej: tabla de despachos TAGSA. (useFieldArray?) (Las filas de la tabla son "dinamicas" por API, no por input del usuario)
   
 Hooks:
+  useForm:
+    - Hook principal, encargado de almacenar los datos del formulario
+
   useFormState:
-    Funcion:
-      - Sirve para detectar si el usuario modifico el campo, dejandolo "dirty"
-    
-    Preguntas:
-      - En la docu explica que sirve para reducir el impacto de los re renders, pero por que? No termino de entender en la explicacion
-        - Proxy, reflection? 
+    - Sirve para detectar si el usuario modifico el campo, dejandolo "dirty", re-renderea a nivel componente, es decir, donde se lo llame.
+
+  
+  useController
+    - misma funcionalidad que <Controller />, solo que con el hook, podemos crear componentes reutilizables, un caso de uso para <Controller /> Seria cuando queremos
+      implementar rapidamente un componente, y le ponemos el mismo de wrapper.
+  
+  formState:
+    - Sirve para detectar si el usuario modifico el campo, dejandolo "dirty", re-renderea a nivel root, es decir, donde se llamo el useForm
+
+
+Componentes:
+  Controller:
+    - Esta libreria, recae en el uso de los componentes no controlados. A dia de hoy es complicado no utilizar una libreria de UI, que, generalmente, utilizan componentes controlados
+      por lo que este componente nos permite envolver al componente de UI y permitirnos trabajar con el

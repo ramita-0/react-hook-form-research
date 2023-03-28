@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { Controller, useController, useFieldArray, useForm, useFormContext, useWatch } from 'react-hook-form';
+import React from 'react';
+import { Controller, useWatch } from 'react-hook-form';
 
 import { Button, ButtonGroup, Input } from 'reactstrap';
 
-export default function FilaDespacho({ numero, condicion, despacho, existencia, cantidadADespachar, index, control }) {
+export default function FilaDespacho({ numero, condicion, despacho, existencia, index }) {
   const tipoDeDespacho = useWatch({
-    control,
     name: `despachos[${index}].tipoDeDespacho`
   })
 
@@ -21,14 +20,13 @@ export default function FilaDespacho({ numero, condicion, despacho, existencia, 
             <div style={{ display: 'flex' }}>
               <div>
                 <Controller
-                  control={control}
                   name={`despachos[${index}].tipoDeDespacho`}
                   render={({field: {onChange, value}}) => (
                     <ButtonGroup size={'sm'}>
                       <Button onClick={() => onChange("NO")} color="danger" outline active={value === "NO"}>
                         No
                       </Button>
-                
+
                       <Button onClick={() => onChange("COMPLETO")} color="success" outline active={value === "COMPLETO"}>
                         Completo
                       </Button>
@@ -40,22 +38,18 @@ export default function FilaDespacho({ numero, condicion, despacho, existencia, 
                   )}
                 />
               </div>
-
               {tipoDeDespacho !== "NO" ? (
                 <div style={{ marginLeft: '30px', display: 'flex', justifyContent: 'center', width: '150px' }}>
                   {tipoDeDespacho === "COMPLETO" && (
                     <>
                       <Controller
-                        control={control}
                         name={`despachos[${index}].cantidadADespachar`}
-                        render={({ field: {onChange} }) => (
+                        render={({ field: { value } }) => (
                           <Input
-                            onChange
                             value={existencia}
-                            defaultValue={existencia} // ?
                             type="number"
                             bsSize={'sm'}
-                            disabled={true}
+                            disabled
                           />
                         )}
                       />
@@ -65,11 +59,11 @@ export default function FilaDespacho({ numero, condicion, despacho, existencia, 
                   {tipoDeDespacho === "PARCIAL" && (
                     <>
                       <Controller 
-                        control={control}
                         name={`despachos[${index}].cantidadADespachar`}
-                        render={({ field }) => (
+                        render={({ field: {onChange, value} }) => (
                           <Input
-                            {...field}
+                            onChange={e => onChange(parseInt(e.target.value))}
+                            value={value}
                             type="number"
                             bsSize={'sm'}
                           />

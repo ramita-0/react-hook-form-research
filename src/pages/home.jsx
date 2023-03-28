@@ -4,6 +4,7 @@ import FormReactstrapSelects from '../forms/form-reactstrap-selects'
 import FormAnidadoArray from '../forms/form-anidado-array'
 import FieldArray from '../components/form-anidado/field-array'
 import FormTablaDespachos from '../forms/form-tabla-despachos'
+import FormTestReactstrap from '../forms/form-test-reactstrap'
 
 export default function Home() {
   return (
@@ -35,6 +36,11 @@ export default function Home() {
         <div>
           <h3>Form tabla despachos</h3>
           <FormTablaDespachos />
+        </div>
+
+        <div>
+          <h3>Form test Reactstrap Uncontrolled/Controlled inputs</h3>
+          <FormTestReactstrap />
         </div>
       </div>
 

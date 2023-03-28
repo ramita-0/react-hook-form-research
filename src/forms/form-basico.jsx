@@ -8,7 +8,7 @@ export default function FormBasico() {
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm();
+  } = useForm({});
   
   console.log(watch("firstName"))
 
