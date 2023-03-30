@@ -11,21 +11,21 @@ export default function FormReactstrapSelects() {
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
 
-        <Controller 
+        <Controller
           control={control} 
           name={"chofer"}
           render={({field: {value, onChange}}) => (
-              <Select
-                value={value}
-                onChange={onChange}
-                label={"Chofer"}
-                options={[
-                  { id: 1, value: 'Jose Luis' },
-                  { id: 2, value: 'Pedro Alfonso' },
-                ]}
-              />
-            )
-          }
+            <Select
+              value={value}
+              onChange={onChange}
+              label={"Chofer"}
+              options={[
+                { id: 1, value: 'Jose Luis' },
+                { id: 2, value: 'Pedro Alfonso' },
+              ]}
+            />
+          )
+        }
         />
 
         {/* Noten este shorthand, uso la desestructuracion de 'field', ya que los valores del mismo son

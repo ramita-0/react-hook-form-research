@@ -8,7 +8,11 @@ export default function FormBasico() {
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm({});
+  } = useForm({
+    defaultValues: {
+      firstName: "Ramiro"
+    }
+  });
   
   console.log(watch("firstName"))
 
@@ -21,7 +25,7 @@ export default function FormBasico() {
         {errors.firstName && <p>First name is required.</p>}
 
         <h4 style={{margin:"0", textAlign:"left"}}>Last name</h4>
-        <input {...register('lastName', { required: true })} />
+        <input {...register('lastName')} />
         {errors.lastName && <p>Last name is required.</p>}
 
         <h4 style={{margin:"0", textAlign:"left"}}>Age</h4>
