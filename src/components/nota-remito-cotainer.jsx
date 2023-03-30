@@ -13,7 +13,7 @@ export default function NotaRemitoContainer() {
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={handleSubmit(data => console.log(data))}>
+      <form onSubmit={methods.handleSubmit(data => console.log(data))}>
         <EdicionRemito />
         <input type="submit" />
       </form>

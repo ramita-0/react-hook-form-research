@@ -6,6 +6,8 @@ import FieldArray from '../components/form-anidado/field-array'
 import FormTablaDespachos from '../forms/form-tabla-despachos'
 import FormTestReactstrap from '../forms/form-test-reactstrap'
 import NotaRemitoContainer from '../components/nota-remito-cotainer'
+import FormTestControl from '../forms/form-test-control'
+import FormAsyncDefaultvalues from '../forms/form-async-default-values'
 
 export default function Home() {
   return (
@@ -47,6 +49,16 @@ export default function Home() {
         <div>
           <h3>Seccion remito implementacion</h3>
           <NotaRemitoContainer />
+        </div>
+
+        <div>
+          <h3>Test control</h3>
+          <FormTestControl />
+        </div>
+
+        <div>
+          <h3>Test async default values</h3>
+          {/* <FormAsyncDefaultvalues /> */}
         </div>
       </div>
 

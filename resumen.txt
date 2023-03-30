@@ -92,49 +92,135 @@ En este ejemplo doy uso del hook useRef() para instanciar una referencia que va 
 la cual despues accedo a su valor para setear el estado al hacer click en el submit
 
 
-React hook form:
-  Buen DX
-  Liviano y performante
-  Buen UX
-  Facil de incorporar a formularios existentes, modificando poco codigo
-  Se basa en componentes no controlados, aislando los inputs de tu formulario entre si.
-  Tiene validacion estandar de HTML
-
 
 Pros generales:
   - Open source
+  - Buen DX y UX
   - Activamente mantenido
+  - Facil de incorporar a formularios existentes, modificando poco codigo 
   - En alza de popularidad
-
+  - Liviano y performante
+  - Tiene validacion estandar de HTML
+  - Se basa en componentes no controlados, aislando los inputs de tu formulario entre si.
+  - DevTools para debugging
 Pros casos de uso:
   - Puedo encapsular componentes de librerias de ui que son controlados con el componente Controller y hacerlo funcionar. 
-      Por lo que podemos tener componentes controlados y no controlados sin problema alguno
+    Por lo que podemos tener componentes controlados y no controlados sin problema alguno
   - Se puede utilizar en formularios anidados
   - Soporte para Zod, Yup y demas
+  - Soporta la implementacion con componentes de clase, pero es mas complejo
+  - Soporte para forms para personas con imparidades (A11y, ARIA)
+  - Wizzards
 
 Casos de uso a entender como se desarrollan con el hook:
   - Array de objetos/plano que yo agrega o saco elementos del mismo, que pase su valor final, ej: [1,2,3,4] a ser parte del estado del formulario al submitearlo.
     El mismo array se modifica por medio de un solo input, que yo escribo y al darle al boton + se agrega, o al clickear una X en uno de los elementos rendereados, se borra del
     estado.
   - Array de CAMPOS dinamicos, ej: tabla de despachos TAGSA. (useFieldArray?) (Las filas de la tabla son "dinamicas" por API, no por input del usuario)
-  
+
 Hooks:
-  useForm:
+  useForm
     - Hook principal, encargado de almacenar los datos del formulario
 
-  useFormState:
-    - Sirve para detectar si el usuario modifico el campo, dejandolo "dirty", re-renderea a nivel componente, es decir, donde se lo llame.
-
-  
   useController
-    - misma funcionalidad que <Controller />, solo que con el hook, podemos crear componentes reutilizables, un caso de uso para <Controller /> Seria cuando queremos
-      implementar rapidamente un componente, y le ponemos el mismo de wrapper.
-  
+    - Misma funcionalidad que <Controller />, solo que con el hook, podemos crear componentes controlados reutilizables
+
+  useFormContext
+    - Similar al context de react, utilizando un componente proveedor FormProvider se puede llamar a todos los metodos del useForm, dentro de los componentes hijos del proveedor
+
+  useWatch
+    - Se subscribe a el/los inputs solicitados pudiendo realizar conditional renderings al ver en "vivo" su contenido
+
+  useFormState
+    - Sirve para detectar si el usuario modifico el campo, dejandolo "dirty", re-renderea a nivel raiz
+
+  useFieldArray
+    - Utilizado cuando tenemos campos dinamicos, que el usuario puedo agregar, borrar, moverlos, etc. Viene con su set de metodos, ej: append, prepend, remove...
+
+Metodos de useForm:
+  register:
+    - Registra un input al formulario, se le puede agregar validacion HTML nativa y custom
+  unregister:
+    - Da de baja el registro de un campo del formulario
   formState:
-    - Sirve para detectar si el usuario modifico el campo, dejandolo "dirty", re-renderea a nivel root, es decir, donde se llamo el useForm
-
-
+    - Mismo funcionamiento que useFormState pero re-renderea a nivel raiz
+  watch:
+    - Mismo funcionamiento que useWatch pero re-rendea a nivel raiz
+  handleSubmit:
+    - Recive los datos del form, si es que la validation es satisfactoria
+  reset:
+    - Sirve para resetear todo el estado del formulario, las subscripciones y referencias de campos. Usando ciertos argumentos, el reseteo puede hacerse parcialmente.
+  resetField:
+    - Resetea el estado de un solo campo
+  setError:
+    - Permite manualmente setear uno o mas errores a campos del formulario
+  clearErrors:
+    - Permite borrar manualmente errores en el formulario
+  setValue:
+    - Permite cambiar el valor de un campo a lo que se quiera, al cambiarlo tambien se puede validar esta insercion
+  setFocus:
+    - Focusea un input a eleccion
+  getValues:
+    - Lee el/los valores del form
+  getFieldState:
+    - Devuelve el estado de un campo; si se modifico (dirty), se toco (focus, blur), etc.
+  trigger:
+    - Triggerea manualmente validacion de input o form, es util cuando tenemos dependencia de validacion (el valor de un input depende del valor de otro input)
+  control:
+    - Registra componentes en el formulario (entiendo que se usa para los componentes controlados? que necesitan de este metodo por no poder usar el register?)
+  Form (BETA):
+    - ...
+    
 Componentes:
   Controller:
     - Esta libreria, recae en el uso de los componentes no controlados. A dia de hoy es complicado no utilizar una libreria de UI, que, generalmente, utilizan componentes controlados
-      por lo que este componente nos permite envolver al componente de UI y permitirnos trabajar con el
+      por lo que este componente nos permite envolver al componente de UI y permitirnos trabajar con el, integrandolo al formulario
+      
+      Un caso de uso para <Controller /> Seria cuando queremos
+      implementar rapidamente un componente controlado, y lo envolvemos con este Controller.
+
+
+
+watch vs getValues
+
+Watch: Subscribirse o "mirar" el input, es decir, se re renderea el componente al que te subscribis, cuando este mismo cambia por un evento.
+getValues: devuelve una instancia de el/los valores indicados, los cuales estan almacenados dentro del hook. Es rapido y no re-renderea.
+
+
+
+Parseador en casos de 0, undefined, null:
+
+const ControllerPlus = ({
+  control,
+  transform,
+  name,
+  defaultValue
+}) => (
+  <Controller
+    defaultValue={defaultValue}
+    control={control}
+    name={name}
+    render={({ field }) => (
+      <input
+        onChange={(e) => field.onChange(transform.output(e))}
+        value={transform.input(field.value)}
+      />
+    )}
+  />
+);
+
+// usage below:
+<ControllerPlus<string, number>
+  transform={{
+    input: (value) =>
+      isNaN(value) || value === 0 ? "" : value.toString(),
+    output: (e) => {
+      const output = parseInt(e.target.value, 10);
+      return isNaN(output) ? 0 : output;
+    }
+  }}
+  control={control}
+  name="number"
+  defaultValue=""
+/>
+
